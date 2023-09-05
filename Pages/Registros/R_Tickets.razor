@@ -1,0 +1,68 @@
+﻿@page "/ticket"
+
+
+@inject TicketsBLL ticketBLL
+
+<PageTitle>Tickets</PageTitle>
+
+<h3>Registro de Tickets</h3>
+<input type="button"
+       value="Guardar"
+@onclick="Guardar" />
+
+<input type="button"
+       value="Buscar"
+@onclick="BuscarDatos" />
+
+<table class="table table-striped table-bordered table-responsive-lg">
+    <tr>
+        <th>TicketId</th>
+        <th>Cliente</th>
+        <th>Asunto</th>
+    </tr>
+    @foreach (var ticket in this.MisTickets)
+    {
+        <tr>
+            <td>@ticket.TicketId</td>
+            <td>@ticket.Cliente</td>
+            <td>@ticket.Asunto</td>
+        </tr>
+    }
+    <tr>
+        <td colspan="3">@this.MisTickets.Count()</td>
+    </tr>
+</table>
+
+@if(this.Error != null)
+{
+    <label class="text-danger"> @Error</label>
+}
+
+@code {
+    public List<Tickets> MisTickets { get; set; } = new List<Tickets>();
+    public string? Error { get; set; } = null;
+
+    public void Guardar()
+    {
+        var miTicket = new Tickets
+            {
+                Asunto = "Impresora mala",
+                Cliente = "Ramon",
+                SolicitadoPor = "Enel",
+                Solicitud = "Ayuda con esta trapo de impresora"
+            };
+
+        var guardo = ticketBLL.Save(miTicket);
+        if (guardo)
+            BuscarDatos();
+        else
+            Error = "No fue posible guardar";
+    }
+
+    private void BuscarDatos()
+    {
+        this.MisTickets = ticketBLL.GetTickets();
+
+    }
+
+}
